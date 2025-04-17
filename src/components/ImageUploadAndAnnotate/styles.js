@@ -4,12 +4,12 @@ import styled from '@emotion/styled';
 import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
 
 export const ContainerBox = styled.div`
-  border: 1px dashed gray;
+
   border-radius: 4px;
   padding: 20px;
   text-align: center;
   cursor: pointer;
-  margin-bottom: 20px;
+
   height: 100%;
   display: flex;
   justify-content: center;
@@ -49,6 +49,7 @@ export const UploadBox = styled.div`
   border: 2px dashed gray;
   border-radius: 8px;
   background-color: #f9f9f9;
+  opacity: 81%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   position: relative;

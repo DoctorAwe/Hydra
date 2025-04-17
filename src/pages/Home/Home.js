@@ -7,6 +7,15 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { ImageSlider, ImageUploadAndAnnotate } from "../../components";
 import {Send} from "@mui/icons-material";
 import {BarChart, LineChart} from '@mui/x-charts';
+import {Typography, Button, List, ListItem, ListItemText,ListItemIcon } from '@mui/material';
+import IOCASLogo from '../../logo.png';
+import HomeIcon from '@mui/icons-material/Home';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import InfoIcon from '@mui/icons-material/Info';
+import ContactMailIcon from '@mui/icons-material/ContactMail';
+import Result from "./ExportResult";
 
 
 const App = () => {
@@ -15,47 +24,9 @@ const App = () => {
     const [loading, setLoading] = useState(false);
     const [disable, setDisable] = useState(true);
     const [loadingText, setLoadingText] = useState("推理")
-    const [barChartData, setBarChartData] = useState({ current: {}, overall: {} });
-    const [lineChartData, setLineChartData] = useState({ densities: [], averageSizes: [] });
-
-    const calculateChartData = useCallback(() => {
-        const completedFiles = files.filter(file => file.isCompleted);
-
-        const overallDensity = completedFiles.length ? completedFiles.length / completedFiles.reduce((acc, file) => acc + file.data.length, 0) : 0;
-        const overallAverageSize = completedFiles.length
-            ? completedFiles.reduce((acc, file) => {
-            const sizes = file.data.map(d => (d[3] - d[1]) * (d[4] - d[2]) * 100);
-            return acc + sizes.reduce((a, b) => a + b, 0) / sizes.length;
-        }, 0) / completedFiles.length
-            : 0;
-
-        const currentDensity = selectedImage && selectedImage.isCompleted ? 1 / selectedImage.data.length : 0;
-        const currentAverageSize = selectedImage && selectedImage.isCompleted
-            ? selectedImage.data.map(d => (d[3] - d[1]) * (d[4] - d[2]) *100).reduce((a, b) => a + b, 0) / selectedImage.data.length
-            : 0;
-
-        setBarChartData({
-            current: { density: currentDensity, averageSize: currentAverageSize },
-            overall: { density: overallDensity, averageSize: overallAverageSize },
-        });
-
-        const densities = completedFiles.map(file => 1 / file.data.length);
-        const averageSizes = completedFiles.map(file => {
-            const sizes = file.data.map(d => (d[3] - d[1]) * (d[4] - d[2]) *100);
-            return sizes.reduce((a, b) => a + b, 0) / sizes.length;
-        });
-        setLineChartData({
-                densities,
-                averageSizes,
-        });
 
 
-    }, [files, selectedImage]);
 
-
-    useEffect(() => {
-        calculateChartData();
-    }, [files, selectedImage]);
 
     const onDrop = useCallback(async (acceptedFiles) => {
         for (const file of acceptedFiles) {
@@ -142,8 +113,8 @@ const App = () => {
 
 
 
-    return (
-        <Container maxWidth={false} style={{ height: '100vh', overflow: 'hidden', padding: '20px' }}>
+    const main =
+        (<Container maxWidth={false} style={{ height: '100vh', overflow: 'hidden', padding: '20px' ,backgroundColor:"#F0F0F0"}}>
             <Grid container spacing={2} sx={{ height: "100%" }}>
                 <Grid item xs={6} sx={{ height: "55%" }}>
                     <ImageUploadAndAnnotate
@@ -249,41 +220,143 @@ const App = () => {
 
 
                 </Grid>
-                <Grid item xs={6} >
-                    <Box sx={{ height: '300px', width: '100%' }}>
-                        <BarChart
-                            xAxis={[{ scaleType: 'band', data: ['种群密度 (相对)', '平均尺寸 (相对)'] }]}
-                            series={[
-                                { data: [barChartData.current.density, barChartData.current.averageSize], label: "当前" },
-                                { data: [barChartData.overall.density, barChartData.overall.averageSize], label: "总体" },
-                            ]}
-                            height={300}
-                        />
 
-                    </Box>
-                    <Divider style={{ marginBottom: '20px' }} />
-                    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <LineChart
-                            xAxis={[{ data: files.filter(file => file.isCompleted).map((_, idx) => idx + 1) }]}
-                            series={[
-                                {
-                                    data: lineChartData.densities,
-                                    label: "种群密度 (相对)",
-                                },
-                                {
-                                    data: lineChartData.averageSizes,
-                                    label: "平均尺寸 (相对)",
-                                },
-                            ]}
-                            height={300}
-                        />
-                        <span>种群密度和平均尺寸 / 任务 </span>
-                    </Box>
-
-                </Grid>
             </Grid>
         </Container>
     );
+
+
+
+    const Sidebar = ({ onNavigate }) => {
+        const menuItems = [
+            { key: 'frameRecognition', label: '开始识别', icon: <CameraAltIcon /> },
+            { key: 'exportResults', label: '结果导出', icon: <SaveAltIcon /> },
+            { key: 'projectIntro', label: '项目介绍', icon: <InfoIcon /> },
+            { key: 'ALIntro', label: '算法介绍', icon: <InfoIcon /> },
+            { key: 'contactUs', label: '联系我们', icon: <ContactMailIcon /> },
+        ];
+
+        return (
+            <Box
+                sx={{
+                    width: '200px',
+                    backgroundColor: '#2E3B55',
+                    height: '100vh',
+                    color: 'white',
+                    padding: '20px 0 20px 0',
+                    position: 'fixed',
+                    textAlign: 'center',
+                }}
+            >
+                <img
+                    src={IOCASLogo}
+                    alt="IOCAS Logo"
+                    style={{ cursor: 'pointer', height: '100px', marginBottom: '20px' }}
+                    onClick={() => onNavigate('home')}
+                />
+                <List>
+                    {menuItems.map((item, index) => (
+                        <React.Fragment key={item.key}>
+                            <ListItem
+                                button
+                                sx={{
+                                    color: 'white',
+                                    textAlign: 'center',
+                                    flexDirection: 'column', // 图标和文字垂直排列
+                                    '&:hover': {
+                                        backgroundColor: '#394867',
+                                    },
+                                }}
+                                onClick={() => onNavigate(item.key)}
+                            >
+                                <ListItemIcon sx={{ color: 'white', justifyContent: 'center', minWidth: '0' }}>
+                                    {item.icon}
+                                </ListItemIcon>
+                                <ListItemText primary={item.label} sx={{ textAlign: 'center', marginTop: '5px' }} />
+                            </ListItem>
+                            {index < menuItems.length - 1 && <Divider sx={{ backgroundColor: '#898887' }} />}
+                        </React.Fragment>
+                    ))}
+                </List>
+            </Box>
+        );
+    };
+
+    const Header = () => {
+
+        return (
+            <Box
+                sx={{
+                    textAlign: 'center',
+                    backgroundSize: '100% 100%', // 拉伸背景图片，使其铺满容器
+                    backgroundPosition: 'center', // 居中背景图片
+                    backgroundRepeat: 'no-repeat', // 不重复背景图片
+                    backgroundImage: 'url(/background.webp)',
+                    height: '100vh', // 修正为充满视口高度
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+                <img src={IOCASLogo} alt="IOCAS Logo" style={{ height: '100px', marginBottom: '20px' }} />
+                <Typography variant="h4">水母水螅体人工智能定量分析系统</Typography>
+                <Typography variant="subtitle1">Artificial Intelligence Hydra Analysis System</Typography>
+                <Button variant="contained" sx={{ marginTop: '20px' }}>了解更多</Button>
+            </Box>
+        );
+
+
+    };
+
+    const FrameRecognition = () => main;
+    const Metrics = () => <Typography variant="h5">批量页面内容</Typography>;
+    const ExportResults = () => <Typography variant="h5">结果导出页面内容</Typography>;
+    const ProjectIntro = () => <Typography variant="h5">项目介绍页面内容</Typography>;
+    const InclusionIntro = () => <Typography variant="h5">算法介绍页面内容</Typography>;
+    const ContactUs = () => <Typography variant="h5">联系我们页面内容</Typography>;
+
+    const App1 = () => {
+        const [currentPage, setCurrentPage] = useState('home');
+
+        const renderPage = () => {
+            switch (currentPage) {
+                case 'home':
+                    return <Header/>;
+                case 'frameRecognition':
+                    return main;
+                case 'metrics':
+                    return <Metrics />;
+                case 'exportResults':
+                    return <Result files={files} />;
+                case 'projectIntro':
+                    return <ProjectIntro />;
+                case 'inclusionIntro':
+                    return <InclusionIntro />;
+                case 'contactUs':
+                    return <ContactUs />;
+                default:
+                    return <Typography variant="h5">页面未找到</Typography>;
+            }
+        };
+
+        return (
+            <Box sx={{ display: 'flex', height: '100vh' }}> {/* 确保 App 的高度充满视口 */}
+                <Sidebar onNavigate={setCurrentPage} />
+                <Box sx={{ marginLeft: '200px', width: '100%' }}>
+                    <Box sx={{ width: '100%', height: '100vh' }}>{renderPage()}</Box>
+                </Box>
+            </Box>
+        );
+    };
+
+
+    return <App1 />;
+
+
+
 };
 
 export default App;
+
+
