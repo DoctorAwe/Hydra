@@ -68,6 +68,10 @@ const ImageUploadAndAnnotate = ({ getRootProps, getInputProps, open, image }) =>
                     });
                 }
             };
+            if (img.complete) {
+                img.onload(); // 手动调用
+            }
+
         }
     }, [image]);
 
