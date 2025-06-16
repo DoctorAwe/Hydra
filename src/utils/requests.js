@@ -2,7 +2,7 @@ import axios from "axios"
 import store from "../store"
 
 const requests = axios.create({
-    baseURL: "http://localhost:8080",
+    baseURL: "http://cn-nb-1.ioll.cc:26783",
     timeout: 20000
 })
 
