@@ -58,7 +58,7 @@ const Recognition = () => {
 
     const handlePredictClick = async (image) => {
         setLoading(true);
-        const eventSource = new EventSource('http://localhost:8080/task/subscribe');
+        const eventSource = new EventSource('http://cn-nb-1.ioll.cc:26783/task/subscribe');
 
         eventSource.addEventListener('taskId', async (event) => {
             if (image.shortLink) {

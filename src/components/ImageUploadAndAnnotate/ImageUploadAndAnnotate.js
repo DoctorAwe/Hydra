@@ -64,7 +64,7 @@ const ImageUploadAndAnnotate = ({ getRootProps, getInputProps, open, image }) =>
 
                         ctx.font = '10px Arial';
                         ctx.fillStyle = 'aqua';
-                        ctx.fillText(`Class: ${cls}, Conf: ${confidence}`, x1Canvas, y1Canvas - 5);
+                        // ctx.fillText(`Class: ${cls}, Conf: ${confidence}`, x1Canvas, y1Canvas - 5);
                     });
                 }
             };
